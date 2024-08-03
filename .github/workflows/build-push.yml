@@ -29,5 +29,5 @@ jobs:
           name: build-artifacts
           path: |
             *.dsc
-            *.tar.xz
+            *.tar.gz
             *.deb

@@ -52,7 +52,7 @@ jobs:
           body: Release ${{ github.event.inputs.version }}nyow
           artifacts: |
             *.dsc
-            *.tar.xz
+            *.tar.gz
             *.deb
 
   push:

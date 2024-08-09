@@ -47,9 +47,9 @@ jobs:
       - name: Create GitHub Release
         uses: ncipollo/release-action@v1
         with:
-          tag: ${{ github.event.inputs.version }}
-          name: ${{ github.event.inputs.version }}
-          body: Release ${{ github.event.inputs.version }}
+          tag: ${{ github.event.inputs.version }}nyow
+          name: ${{ github.event.inputs.version }}nyow
+          body: Release ${{ github.event.inputs.version }}nyow
           artifacts: |
             *.dsc
             *.tar.xz
@@ -59,7 +59,7 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     env:
-      DIRECTORY_NAME: fastfetch_${{ github.event.inputs.version }}
+      DIRECTORY_NAME: fastfetch_${{ github.event.inputs.version }}nyow
     steps:
       - name: Download artifacts
         uses: actions/download-artifact@v4

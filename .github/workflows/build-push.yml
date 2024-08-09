@@ -29,3 +29,49 @@ jobs:
             *.dsc
             *.tar.gz
             *.deb
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+      - name: Create GitHub Release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ github.event.inputs.version }}
+          name: ${{ github.event.inputs.version }}
+          body: Release ${{ github.event.inputs.version }}
+          artifacts: |
+            *.dsc
+            *.tar.xz
+            *.deb
+
+  push:
+    needs: build
+    runs-on: ubuntu-latest
+    env:
+      DIRECTORY_NAME: fastfetch_${{ github.event.inputs.version }}
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+          path: '${{ env.DIRECTORY_NAME }}'
+      - name: Compress artifact directory
+        run: |
+          tar -cJvf $DIRECTORY_NAME.tar.xz -C $DIRECTORY_NAME .
+      - name: Set up SSH agent
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SFTP_PRIVATE_KEY }}
+      - name: Push artifact to Nyow archive
+        run: |
+          sftp -P ${{ secrets.SFTP_PORT }} -o StrictHostKeyChecking=no ${{ secrets.SFTP_USERNAME }}@${{ secrets.SFTP_HOST }} << EOF
+          put $DIRECTORY_NAME.tar.xz /ha-unstable/
+          bye
+          EOF

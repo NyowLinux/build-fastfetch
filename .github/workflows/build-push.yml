@@ -17,8 +17,12 @@ jobs:
       - name: Extract source file
         run: tar xf "${{ github.event.inputs.version }}.tar.gz" && rm "${{ github.event.inputs.version }}.tar.gz"
       - name: Build the package
+        env:
+          DEBFULLNAME: ${{ vars.DEBFULLNAME }}
+          DEBEMAIL: ${{ vars.DEBEMAIL }}
         run: |
           cd fastfetch-${{ github.event.inputs.version }}
+          dch -v ${{ github.event.inputs.version }}nyow --force-distribution -D ha "Bump version."
           mk-build-deps --install --tool 'apt -y --no-install-recommends' debian/control
           dpkg-buildpackage -us -uc
       - name: Upload build artifacts
